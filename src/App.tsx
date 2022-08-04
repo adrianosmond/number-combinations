@@ -41,25 +41,25 @@ const App = () => {
 
   return (
     <>
-      <h1 className="text-5xl font-bold">Number combinations</h1>
-      <div className="my-4">
+      <h1 className="text-3xl md:text-5xl font-bold mx-auto">Number<br className='lg:hidden'/>{' '}combinations</h1>
+      <div className="my-6 md:my-8">
         Make{' '}
         <select
           value={target}
           onChange={(e) => setTarget(parseInt(e.target.value, 10))}
-          className="border-0 border-b-2 border-yellow-400 p-2 bg-transparent outline-none"
+          className="border-0 border-b-2 border-yellow-400 p-2 pt-0 bg-transparent outline-none appearance-none font-mono font-bold"
         >
           {fortyFive.map((v) => (
             <option value={v} key={v}>
               {v}
             </option>
           ))}
-        </select>
+        </select>{' '}
         from{' '}
         <select
           value={numDigits}
           onChange={(e) => setNumDigits(parseInt(e.target.value, 10))}
-          className="border-0 border-b-2 border-yellow-400 p-2 bg-transparent outline-none"
+          className="border-0 border-b-2 border-yellow-400 p-2 pt-0 bg-transparent outline-none appearance-none font-mono font-bold"
         >
           {nine.map((v) => (
             <option value={v} key={v}>
@@ -69,9 +69,9 @@ const App = () => {
         </select>{' '}
         digits
       </div>
-      <div className="font-mono mt-8">
-        {combinations.map((combination) => (
-          <div>{combination.join(', ')}</div>
+      <div className="font-mono p-4 md:p-8 bg-white bg-transparent bg-opacity-5">
+        {combinations.map((combination, idx) => (
+          <div key={idx}>{combination.join(', ')}</div>
         ))}
       </div>
     </>
