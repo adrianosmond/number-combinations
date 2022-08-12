@@ -50,7 +50,7 @@ const App = () => {
         <select
           value={target}
           onChange={(e) => setTarget(parseInt(e.target.value, 10))}
-          className="border-0 border-b-2 border-yellow-400 p-2 pt-0 bg-transparent outline-none appearance-none font-mono font-bold"
+          className="border-0 border-b-2 rounded-none border-yellow-400 p-2 pt-0 bg-transparent outline-none appearance-none font-mono font-bold"
         >
           {fortyFive.map((v) => (
             <option value={v} key={v}>
@@ -62,7 +62,7 @@ const App = () => {
         <select
           value={numDigits}
           onChange={(e) => setNumDigits(parseInt(e.target.value, 10))}
-          className="border-0 border-b-2 border-yellow-400 p-2 pt-0 bg-transparent outline-none appearance-none font-mono font-bold"
+          className="border-0 border-b-2 rounded-none border-yellow-400 p-2 pt-0 bg-transparent outline-none appearance-none font-mono font-bold"
         >
           {nine.map((v) => (
             <option value={v} key={v}>
