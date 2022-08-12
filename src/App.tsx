@@ -41,7 +41,10 @@ const App = () => {
 
   return (
     <>
-      <h1 className="text-3xl md:text-5xl font-bold mx-auto">Number<br className='lg:hidden'/>{' '}combinations</h1>
+      <h1 className="text-3xl md:text-5xl font-bold mx-auto">
+        Number
+        <br className="lg:hidden" /> combinations
+      </h1>
       <div className="my-6 md:my-8">
         Make{' '}
         <select
