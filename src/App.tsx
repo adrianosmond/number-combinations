@@ -4,7 +4,7 @@ import { SearchProvider } from './contexts/SearchContext';
 import { SavedDataProvider } from './contexts/SavedDataContext';
 
 export type Target = keyof typeof data;
-export type Digit = keyof typeof data[Target];
+export type Digit = keyof (typeof data)[Target];
 export type Combinations = number[][];
 export type FilteredCombinations = {
   isHidden: boolean;
