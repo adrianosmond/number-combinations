@@ -17,11 +17,15 @@ const SavedDataContext = createContext<{
   createItem: (name: string, id: string, combinations: Combinations) => void;
   removeItem: (itemId: string) => void;
   addCombinationsToItem: (itemId: string, combinations: Combinations) => void;
+  hideCombination: (itemId: string, combinationKey: string) => void;
+  showAll: (itemId: string) => void;
 }>({
   savedData: [],
   createItem: () => {},
   removeItem: () => {},
   addCombinationsToItem: () => {},
+  hideCombination: () => {},
+  showAll: () => {},
 });
 
 type SavedDataProviderProps = {
@@ -83,13 +87,66 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
     [],
   );
 
+  const hideCombination = useCallback(
+    (itemId: string, combinationKey: string) => {
+      setSavedData((s) =>
+        s.map((item) =>
+          item.id === itemId
+            ? {
+                ...item,
+                state: item.state.map((state) =>
+                  state.combination.join(',') !== combinationKey
+                    ? state
+                    : {
+                        isHidden: true,
+                        combination: state.combination,
+                      },
+                ),
+              }
+            : item,
+        ),
+      );
+    },
+    [],
+  );
+
+  const showAll = useCallback((itemId: string) => {
+    setSavedData((s) =>
+      s.map((item) =>
+        item.id === itemId
+          ? {
+              ...item,
+              state: item.state.map((state) => ({
+                isHidden: false,
+                combination: state.combination,
+              })),
+            }
+          : item,
+      ),
+    );
+  }, []);
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(savedData));
   }, [savedData]);
 
   const value = useMemo(
-    () => ({ savedData, createItem, removeItem, addCombinationsToItem }),
-    [savedData, createItem, removeItem, addCombinationsToItem],
+    () => ({
+      savedData,
+      createItem,
+      removeItem,
+      addCombinationsToItem,
+      hideCombination,
+      showAll,
+    }),
+    [
+      savedData,
+      createItem,
+      removeItem,
+      addCombinationsToItem,
+      hideCombination,
+      showAll,
+    ],
   );
 
   return (

@@ -15,10 +15,17 @@ const SELECT_TARGET_KEY = 'select-target';
 
 const Tabs = () => {
   const [selectedTab, setSelectedTab] = useState(SELECT_TARGET_KEY);
-  const { savedData, createItem, removeItem, addCombinationsToItem } =
-    useSavedDataContext();
+  const {
+    savedData,
+    createItem,
+    removeItem,
+    addCombinationsToItem,
+    hideCombination,
+    showAll,
+  } = useSavedDataContext();
   const { target, numDigits } = useSearchContext();
   const dataFromSearch = data[target][numDigits];
+  const currentTabState = savedData.find((d) => d.id === selectedTab)?.state;
 
   return (
     <>
@@ -26,16 +33,27 @@ const Tabs = () => {
         {selectedTab === SELECT_TARGET_KEY ? (
           <Search />
         ) : (
-          <div className="my-6 md:my-8 font-mono p-4 md:p-8 bg-white bg-opacity-5">
-            {savedData
-              .find((d) => d.id === selectedTab)
-              ?.state.map(({ combination, isHidden }, idx) => (
+          <div className="my-6 md:my-8 font-mono p-4 md:p-8 bg-white bg-opacity-5 flex flex-col gap-8">
+            <div>
+              {currentTabState?.map(({ combination, isHidden }, idx) => (
                 <Combination
                   key={idx}
                   combination={combination}
                   isHidden={isHidden}
+                  hide={() =>
+                    hideCombination(selectedTab, combination.join(','))
+                  }
                 />
               ))}
+            </div>
+            {currentTabState?.some((s) => s.isHidden) && (
+              <button
+                onClick={() => showAll(selectedTab)}
+                className="font-sans"
+              >
+                Show hidden items
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -105,7 +123,7 @@ const Tabs = () => {
           <button
             onClick={() =>
               createItem(
-                `${target} in ${numDigits}`,
+                `${target} from ${numDigits}`,
                 `${new Date().getTime()}`,
                 dataFromSearch,
               )
