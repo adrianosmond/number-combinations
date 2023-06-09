@@ -4,22 +4,29 @@ import {
   ReactNode,
   SetStateAction,
   createContext,
+  useCallback,
   useContext,
   useMemo,
   useState,
 } from 'react';
-import { Digit, Target } from '../App';
+import data from '../data.json';
+import { Combinations, Digit, Target } from '../App';
+import { useSavedDataContext } from './SavedDataContext';
 
 const SearchContext = createContext<{
   target: Target;
   setTarget: Dispatch<SetStateAction<Target>>;
   numDigits: Digit;
   setNumDigits: Dispatch<SetStateAction<Digit>>;
+  results: Combinations;
+  saveSearch: () => void;
 }>({
   target: '15',
   numDigits: '5',
   setTarget: () => {},
   setNumDigits: () => {},
+  results: [],
+  saveSearch: () => {},
 });
 
 type SearchProviderProps = {
@@ -29,14 +36,22 @@ type SearchProviderProps = {
 export const SearchProvider = ({ children }: SearchProviderProps) => {
   const [target, setTarget] = useState<Target>('15');
   const [numDigits, setNumDigits] = useState<Digit>('5');
+  const results = useMemo(() => data[target][numDigits], [numDigits, target]);
+  const { createItem } = useSavedDataContext();
+  const saveSearch = useCallback(
+    () => createItem(`${target} from ${numDigits}`, results),
+    [createItem, numDigits, results, target],
+  );
   const value = useMemo(
     () => ({
       target,
       setTarget,
       numDigits,
       setNumDigits,
+      results,
+      saveSearch,
     }),
-    [numDigits, target],
+    [target, numDigits, results, saveSearch],
   );
   return (
     <SearchContext.Provider value={value}>{children}</SearchContext.Provider>

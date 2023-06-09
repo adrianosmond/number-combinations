@@ -12,13 +12,16 @@ import { Combinations, SavedData } from '../App';
 
 const STORAGE_KEY = '__SAVED_COMBINATIONS__';
 
+const createId = () => Math.random().toString(36).substring(2);
+
 const SavedDataContext = createContext<{
   savedData: SavedData;
-  createItem: (name: string, id: string, combinations: Combinations) => void;
+  createItem: (name: string, combinations: Combinations) => void;
   removeItem: (itemId: string) => void;
   addCombinationsToItem: (itemId: string, combinations: Combinations) => void;
   hideCombination: (itemId: string, combinationKey: string) => void;
   showAll: (itemId: string) => void;
+  clearData: () => void;
 }>({
   savedData: [],
   createItem: () => {},
@@ -26,6 +29,7 @@ const SavedDataContext = createContext<{
   addCombinationsToItem: () => {},
   hideCombination: () => {},
   showAll: () => {},
+  clearData: () => {},
 });
 
 type SavedDataProviderProps = {
@@ -44,22 +48,19 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
 
   const [savedData, setSavedData] = useState<SavedData>(initialState);
 
-  const createItem = useCallback(
-    (name: string, id: string, combinations: Combinations) => {
-      setSavedData((s) => [
-        ...s,
-        {
-          name,
-          id,
-          state: combinations.map((c) => ({
-            isHidden: false,
-            combination: c,
-          })),
-        },
-      ]);
-    },
-    [],
-  );
+  const createItem = useCallback((name: string, combinations: Combinations) => {
+    setSavedData((s) => [
+      ...s,
+      {
+        name,
+        id: createId(),
+        state: combinations.map((c) => ({
+          isHidden: false,
+          combination: c,
+        })),
+      },
+    ]);
+  }, []);
 
   const removeItem = useCallback((itemId: string) => {
     setSavedData((s) => s.filter((item) => item.id !== itemId));
@@ -126,6 +127,10 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
     );
   }, []);
 
+  const clearData = useCallback(() => {
+    setSavedData(() => []);
+  }, []);
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(savedData));
   }, [savedData]);
@@ -138,6 +143,7 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
       addCombinationsToItem,
       hideCombination,
       showAll,
+      clearData,
     }),
     [
       savedData,
@@ -146,6 +152,7 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
       addCombinationsToItem,
       hideCombination,
       showAll,
+      clearData,
     ],
   );
 
