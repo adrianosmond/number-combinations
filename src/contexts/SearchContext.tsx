@@ -10,15 +10,18 @@ import {
   useState,
 } from 'react';
 import data from '../data.json';
-import { Combinations, Digit, Target } from '../App';
 import { useSavedDataContext } from './SavedDataContext';
+
+export type Target = keyof typeof data;
+export type Digit = keyof (typeof data)[Target];
+export type SearchResults = number[][];
 
 const SearchContext = createContext<{
   target: Target;
   setTarget: Dispatch<SetStateAction<Target>>;
   numDigits: Digit;
   setNumDigits: Dispatch<SetStateAction<Digit>>;
-  results: Combinations;
+  results: SearchResults;
   saveSearch: () => void;
 }>({
   target: '15',

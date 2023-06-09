@@ -1,7 +1,9 @@
-import type { Target, Digit, Combinations } from '../App';
-import data from '../data.json';
 import Combination from './Combination';
-import { useSearchContext } from '../contexts/SearchContext';
+import {
+  type Digit,
+  type Target,
+  useSearchContext,
+} from '../contexts/SearchContext';
 
 const fortyFive: Target[] = new Array(45)
   .fill(1)
@@ -10,8 +12,8 @@ const fortyFive: Target[] = new Array(45)
 const nine: Digit[] = new Array(9).fill(1).map((_, i) => `${i + 1}` as Digit);
 
 const Search = () => {
-  const { target, setTarget, numDigits, setNumDigits } = useSearchContext();
-  const combinations: Combinations = data[target][numDigits];
+  const { target, setTarget, numDigits, setNumDigits, results } =
+    useSearchContext();
 
   return (
     <>
@@ -43,7 +45,7 @@ const Search = () => {
         digits
       </div>
       <div className="font-mono p-4 md:p-8 bg-white bg-opacity-5">
-        {combinations.map((combination, idx) => (
+        {results.map((combination, idx) => (
           <Combination key={idx} combination={combination} />
         ))}
       </div>
