@@ -27,7 +27,7 @@ const createId = () => Math.random().toString(36).substring(2);
 
 const SavedDataContext = createContext<{
   savedData: SavedData;
-  createItem: (name: string, combinations: SearchResults) => void;
+  createItem: (name: string, combinations: SearchResults) => string;
   removeItem: (itemId: string) => void;
   addCombinationsToItem: (itemId: string, combinations: SearchResults) => void;
   hideCombination: (itemId: string, combinationKey: string) => void;
@@ -35,7 +35,7 @@ const SavedDataContext = createContext<{
   clearData: () => void;
 }>({
   savedData: [],
-  createItem: () => {},
+  createItem: () => '',
   removeItem: () => {},
   addCombinationsToItem: () => {},
   hideCombination: () => {},
@@ -61,17 +61,19 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
 
   const createItem = useCallback(
     (name: string, combinations: SearchResults) => {
+      const id = createId();
       setSavedData((s) => [
-        ...s,
         {
           name,
-          id: createId(),
+          id,
           state: combinations.map((c) => ({
             isHidden: false,
             combination: c,
           })),
         },
+        ...s,
       ]);
+      return id;
     },
     [],
   );

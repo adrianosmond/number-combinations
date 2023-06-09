@@ -1,18 +1,30 @@
+import { Dispatch, SetStateAction } from 'react';
+import { useAnimationContext } from '../contexts/AnimationContext';
 import { useSavedDataContext } from '../contexts/SavedDataContext';
 import { useSearchContext } from '../contexts/SearchContext';
+import { SELECT_TARGET_KEY } from './Tabs';
 
 type ActionButtonsProps = {
   isSearching: boolean;
+  setSelectedTab: Dispatch<SetStateAction<string>>;
 };
 
-const ActionButtons = ({ isSearching }: ActionButtonsProps) => {
+const ActionButtons = ({ isSearching, setSelectedTab }: ActionButtonsProps) => {
   const { savedData, clearData } = useSavedDataContext();
   const { saveSearch } = useSearchContext();
+  const { setDestination, tabsRef } = useAnimationContext();
 
   return (
     <div className="fixed bottom-8 md:bottom-2 right-2 flex flex-col gap-2">
       {isSearching && (
-        <button onClick={saveSearch}>
+        <button
+          onClick={() => {
+            const newTabId = saveSearch();
+            requestAnimationFrame(() => {
+              setDestination(tabsRef.current[newTabId]);
+            });
+          }}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 -960 960 960"
@@ -23,7 +35,12 @@ const ActionButtons = ({ isSearching }: ActionButtonsProps) => {
         </button>
       )}
       {savedData.length > 0 && (
-        <button onClick={clearData}>
+        <button
+          onClick={() => {
+            clearData();
+            setSelectedTab(SELECT_TARGET_KEY);
+          }}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 -960 960 960"

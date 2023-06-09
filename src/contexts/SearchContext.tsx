@@ -22,14 +22,14 @@ const SearchContext = createContext<{
   numDigits: Digit;
   setNumDigits: Dispatch<SetStateAction<Digit>>;
   results: SearchResults;
-  saveSearch: () => void;
+  saveSearch: () => string;
 }>({
   target: '15',
   numDigits: '5',
   setTarget: () => {},
   setNumDigits: () => {},
   results: [],
-  saveSearch: () => {},
+  saveSearch: () => '',
 });
 
 type SearchProviderProps = {

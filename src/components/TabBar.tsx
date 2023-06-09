@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { useSavedDataContext } from '../contexts/SavedDataContext';
 import { useSearchContext } from '../contexts/SearchContext';
 import { SELECT_TARGET_KEY } from './Tabs';
+import { useAnimationContext } from '../contexts/AnimationContext';
 
 type TabBarProps = {
   isSearching: boolean;
@@ -14,6 +15,7 @@ const TabBar = ({ isSearching, selectedTab, setSelectedTab }: TabBarProps) => {
   const { savedData, addCombinationsToItem, removeItem } =
     useSavedDataContext();
   const { results } = useSearchContext();
+  const { setDestination, tabsRef } = useAnimationContext();
 
   return (
     <div
@@ -35,8 +37,11 @@ const TabBar = ({ isSearching, selectedTab, setSelectedTab }: TabBarProps) => {
         Search
       </button>
       {savedData.map((tab) => (
-        <div className="flex gap-1 whitespace-nowrap">
+        <div className="flex gap-1 whitespace-nowrap" key={tab.id}>
           <button
+            ref={(node) => {
+              tabsRef.current[tab.id] = node;
+            }}
             key={tab.id}
             onClick={() => setSelectedTab(tab.id)}
             className={classNames({
@@ -51,6 +56,9 @@ const TabBar = ({ isSearching, selectedTab, setSelectedTab }: TabBarProps) => {
             <button
               onClick={() => {
                 addCombinationsToItem(tab.id, results);
+                requestAnimationFrame(() => {
+                  setDestination(tabsRef.current[tab.id]);
+                });
               }}
             >
               <svg

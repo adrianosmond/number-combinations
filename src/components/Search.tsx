@@ -4,6 +4,7 @@ import {
   type Target,
   useSearchContext,
 } from '../contexts/SearchContext';
+import { useAnimationContext } from '../contexts/AnimationContext';
 
 const fortyFive: Target[] = new Array(45)
   .fill(1)
@@ -14,6 +15,8 @@ const nine: Digit[] = new Array(9).fill(1).map((_, i) => `${i + 1}` as Digit);
 const Search = () => {
   const { target, setTarget, numDigits, setNumDigits, results } =
     useSearchContext();
+
+  const { searchResultsRef } = useAnimationContext();
 
   return (
     <>
@@ -44,7 +47,10 @@ const Search = () => {
         </select>{' '}
         digits
       </div>
-      <div className="font-mono p-4 md:p-8 bg-white bg-opacity-5">
+      <div
+        className="font-mono p-4 md:p-8 bg-white bg-opacity-5"
+        ref={searchResultsRef}
+      >
         {results.map((combination, idx) => (
           <Combination key={idx} combination={combination} />
         ))}

@@ -18,7 +18,10 @@ const Tabs = () => {
         selectedTab={selectedTab}
         setSelectedTab={setSelectedTab}
       />
-      <ActionButtons isSearching={isSearching} />
+      <ActionButtons
+        isSearching={isSearching}
+        setSelectedTab={setSelectedTab}
+      />
     </>
   );
 };
