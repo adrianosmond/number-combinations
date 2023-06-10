@@ -30,6 +30,10 @@ const SavedDataContext = createContext<{
   createItem: (name: string, combinations: SearchResults) => string;
   removeItem: (itemId: string) => void;
   renameItem: (itemId: string, newName: string) => void;
+  canAddCombinationsToItem: (
+    itemId: string,
+    combinations: SearchResults,
+  ) => boolean;
   addCombinationsToItem: (itemId: string, combinations: SearchResults) => void;
   hideCombination: (itemId: string, combinationKey: string) => void;
   showAll: (itemId: string) => void;
@@ -39,6 +43,7 @@ const SavedDataContext = createContext<{
   createItem: () => '',
   removeItem: () => {},
   renameItem: () => {},
+  canAddCombinationsToItem: () => true,
   addCombinationsToItem: () => {},
   hideCombination: () => {},
   showAll: () => {},
@@ -96,6 +101,21 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
       ),
     );
   }, []);
+
+  const canAddCombinationsToItem = useCallback(
+    (itemId: string, combinations: SearchResults) => {
+      const existingIds = savedData
+        .find((i) => i.id === itemId)
+        ?.state.map((c) => c.combination.join(','));
+
+      return (
+        combinations
+          .map((c) => c.join(','))
+          .filter((c) => !(existingIds || []).includes(c)).length > 0
+      );
+    },
+    [savedData],
+  );
 
   const addCombinationsToItem = useCallback(
     (itemId: string, combinations: SearchResults) => {
@@ -172,6 +192,7 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
       createItem,
       removeItem,
       renameItem,
+      canAddCombinationsToItem,
       addCombinationsToItem,
       hideCombination,
       showAll,
@@ -182,6 +203,7 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
       createItem,
       removeItem,
       renameItem,
+      canAddCombinationsToItem,
       addCombinationsToItem,
       hideCombination,
       showAll,

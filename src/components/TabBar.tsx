@@ -13,8 +13,13 @@ type TabBarProps = {
 };
 
 const TabBar = ({ isSearching, selectedTab, setSelectedTab }: TabBarProps) => {
-  const { savedData, addCombinationsToItem, removeItem, renameItem } =
-    useSavedDataContext();
+  const {
+    savedData,
+    canAddCombinationsToItem,
+    addCombinationsToItem,
+    removeItem,
+    renameItem,
+  } = useSavedDataContext();
   const { results } = useSearchContext();
   const { setDestination, tabsRef } = useAnimationContext();
 
@@ -62,12 +67,14 @@ const TabBar = ({ isSearching, selectedTab, setSelectedTab }: TabBarProps) => {
           </button>
           {isSearching ? (
             <button
+              disabled={!canAddCombinationsToItem(tab.id, results)}
               onClick={() => {
                 addCombinationsToItem(tab.id, results);
                 requestAnimationFrame(() => {
                   setDestination(tabsRef.current[tab.id]);
                 });
               }}
+              className="disabled:opacity-50"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
