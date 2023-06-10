@@ -4,6 +4,7 @@ import { useSavedDataContext } from '../contexts/SavedDataContext';
 import { useSearchContext } from '../contexts/SearchContext';
 import { SELECT_TARGET_KEY } from './Tabs';
 import { useAnimationContext } from '../contexts/AnimationContext';
+import EditableName from './EditableName';
 
 type TabBarProps = {
   isSearching: boolean;
@@ -12,7 +13,7 @@ type TabBarProps = {
 };
 
 const TabBar = ({ isSearching, selectedTab, setSelectedTab }: TabBarProps) => {
-  const { savedData, addCombinationsToItem, removeItem } =
+  const { savedData, addCombinationsToItem, removeItem, renameItem } =
     useSavedDataContext();
   const { results } = useSearchContext();
   const { setDestination, tabsRef } = useAnimationContext();
@@ -50,7 +51,14 @@ const TabBar = ({ isSearching, selectedTab, setSelectedTab }: TabBarProps) => {
               'border-current': selectedTab === tab.id,
             })}
           >
-            {tab.name}
+            {selectedTab === tab.id ? (
+              <EditableName
+                name={tab.name}
+                saveName={(newName: string) => renameItem(tab.id, newName)}
+              />
+            ) : (
+              tab.name
+            )}
           </button>
           {isSearching ? (
             <button

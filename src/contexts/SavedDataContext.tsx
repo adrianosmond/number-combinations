@@ -29,6 +29,7 @@ const SavedDataContext = createContext<{
   savedData: SavedData;
   createItem: (name: string, combinations: SearchResults) => string;
   removeItem: (itemId: string) => void;
+  renameItem: (itemId: string, newName: string) => void;
   addCombinationsToItem: (itemId: string, combinations: SearchResults) => void;
   hideCombination: (itemId: string, combinationKey: string) => void;
   showAll: (itemId: string) => void;
@@ -37,6 +38,7 @@ const SavedDataContext = createContext<{
   savedData: [],
   createItem: () => '',
   removeItem: () => {},
+  renameItem: () => {},
   addCombinationsToItem: () => {},
   hideCombination: () => {},
   showAll: () => {},
@@ -80,6 +82,19 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
 
   const removeItem = useCallback((itemId: string) => {
     setSavedData((s) => s.filter((item) => item.id !== itemId));
+  }, []);
+
+  const renameItem = useCallback((itemId: string, newName: string) => {
+    setSavedData((s) =>
+      s.map((item) =>
+        item.id === itemId
+          ? {
+              ...item,
+              name: newName,
+            }
+          : item,
+      ),
+    );
   }, []);
 
   const addCombinationsToItem = useCallback(
@@ -156,6 +171,7 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
       savedData,
       createItem,
       removeItem,
+      renameItem,
       addCombinationsToItem,
       hideCombination,
       showAll,
@@ -165,6 +181,7 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
       savedData,
       createItem,
       removeItem,
+      renameItem,
       addCombinationsToItem,
       hideCombination,
       showAll,
