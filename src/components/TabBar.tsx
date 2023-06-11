@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { Dispatch, SetStateAction } from 'react';
+import { CSSProperties, Dispatch, SetStateAction } from 'react';
 import { useSavedDataContext } from '../contexts/SavedDataContext';
 import { useSearchContext } from '../contexts/SearchContext';
 import { SELECT_TARGET_KEY } from './Tabs';
@@ -19,9 +19,11 @@ const TabBar = ({ isSearching, selectedTab, setSelectedTab }: TabBarProps) => {
     addCombinationsToItem,
     removeItem,
     renameItem,
+    transitionItem,
   } = useSavedDataContext();
   const { results } = useSearchContext();
   const { setDestination, tabsRef } = useAnimationContext();
+  const transitioningTab = savedData.find((tab) => tab.isTransitioning);
 
   return (
     <div
@@ -43,7 +45,24 @@ const TabBar = ({ isSearching, selectedTab, setSelectedTab }: TabBarProps) => {
         Search
       </button>
       {savedData.map((tab) => (
-        <div className="flex gap-1 whitespace-nowrap" key={tab.id}>
+        <div
+          className={classNames({
+            'flex gap-1 whitespace-nowrap duration-300': true,
+            'translate-y-10': tab.isTransitioning,
+            'translate-y-0': !tab.isTransitioning,
+            'transition-none':
+              transitioningTab && transitioningTab.id !== tab.id,
+          })}
+          key={tab.id}
+          style={
+            transitioningTab && transitioningTab.id !== tab.id
+              ? ({
+                  '--tw-translate-x':
+                    transitioningTab.name.length === 8 ? `-4.8rem` : '-5.5rem',
+                } as CSSProperties)
+              : {}
+          }
+        >
           <button
             ref={(node) => {
               tabsRef.current[tab.id] = node;
@@ -87,10 +106,13 @@ const TabBar = ({ isSearching, selectedTab, setSelectedTab }: TabBarProps) => {
           ) : (
             <button
               onClick={() => {
-                removeItem(tab.id);
+                transitionItem(tab.id);
                 if (selectedTab === tab.id) {
                   setSelectedTab(SELECT_TARGET_KEY);
                 }
+                setTimeout(() => {
+                  removeItem(tab.id);
+                }, 300);
               }}
             >
               <svg

@@ -17,6 +17,7 @@ export type FilteredCombinations = {
 export type Item = {
   name: string;
   id: string;
+  isTransitioning: boolean;
   state: FilteredCombinations[];
 };
 export type SavedData = Item[];
@@ -30,6 +31,7 @@ const SavedDataContext = createContext<{
   createItem: (name: string, combinations: SearchResults) => string;
   removeItem: (itemId: string) => void;
   renameItem: (itemId: string, newName: string) => void;
+  transitionItem: (itemId: string) => void;
   canAddCombinationsToItem: (
     itemId: string,
     combinations: SearchResults,
@@ -43,6 +45,7 @@ const SavedDataContext = createContext<{
   createItem: () => '',
   removeItem: () => {},
   renameItem: () => {},
+  transitionItem: () => {},
   canAddCombinationsToItem: () => true,
   addCombinationsToItem: () => {},
   hideCombination: () => {},
@@ -73,6 +76,7 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
         {
           name,
           id,
+          isTransitioning: true,
           state: combinations.map((c) => ({
             isHidden: false,
             combination: c,
@@ -96,6 +100,19 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
           ? {
               ...item,
               name: newName,
+            }
+          : item,
+      ),
+    );
+  }, []);
+
+  const transitionItem = useCallback((itemId: string) => {
+    setSavedData((s) =>
+      s.map((item) =>
+        item.id === itemId
+          ? {
+              ...item,
+              isTransitioning: !item.isTransitioning,
             }
           : item,
       ),
@@ -192,6 +209,7 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
       createItem,
       removeItem,
       renameItem,
+      transitionItem,
       canAddCombinationsToItem,
       addCombinationsToItem,
       hideCombination,
@@ -203,6 +221,7 @@ export const SavedDataProvider = ({ children }: SavedDataProviderProps) => {
       createItem,
       removeItem,
       renameItem,
+      transitionItem,
       canAddCombinationsToItem,
       addCombinationsToItem,
       hideCombination,
