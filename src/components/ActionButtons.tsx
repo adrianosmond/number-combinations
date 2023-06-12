@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 import classNames from 'classnames';
-import { useAnimationContext } from '../contexts/AnimationContext';
+import { useUIContext } from '../contexts/UIContext';
 import { useSavedDataContext } from '../contexts/SavedDataContext';
 import { useSearchContext } from '../contexts/SearchContext';
 import { SELECT_TARGET_KEY } from './Tabs';
@@ -13,7 +13,8 @@ type ActionButtonsProps = {
 const ActionButtons = ({ isSearching, setSelectedTab }: ActionButtonsProps) => {
   const { savedData, clearData, transitionItem } = useSavedDataContext();
   const { saveSearch, results } = useSearchContext();
-  const { setDestination, tabsRef, isTabBarScrollable } = useAnimationContext();
+  const { setSaveSearchAnimationDestination, tabsRef, isTabBarScrollable } =
+    useUIContext();
 
   return (
     <div
@@ -48,7 +49,7 @@ const ActionButtons = ({ isSearching, setSelectedTab }: ActionButtonsProps) => {
         onClick={() => {
           const newTabId = saveSearch();
           requestAnimationFrame(() => {
-            setDestination(tabsRef.current[newTabId]);
+            setSaveSearchAnimationDestination(tabsRef.current[newTabId]);
             transitionItem(newTabId);
           });
         }}

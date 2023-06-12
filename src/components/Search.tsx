@@ -1,10 +1,11 @@
+import { useRef } from 'react';
 import Combination from './Combination';
 import {
   type Digit,
   type Target,
   useSearchContext,
 } from '../contexts/SearchContext';
-import { useAnimationContext } from '../contexts/AnimationContext';
+import SearchAnimation from './SearchAnimation';
 
 const fortyFive: Target[] = new Array(45)
   .fill(1)
@@ -15,8 +16,7 @@ const nine: Digit[] = new Array(9).fill(1).map((_, i) => `${i + 1}` as Digit);
 const Search = () => {
   const { target, setTarget, numDigits, setNumDigits, results } =
     useSearchContext();
-
-  const { searchResultsRef } = useAnimationContext();
+  const searchResultsRef = useRef<HTMLDivElement | null>(null);
 
   return (
     <>
@@ -55,6 +55,7 @@ const Search = () => {
           <Combination key={idx} combination={combination} />
         ))}
       </div>
+      <SearchAnimation results={results} searchResultsRef={searchResultsRef} />
     </>
   );
 };

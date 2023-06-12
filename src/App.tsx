@@ -1,17 +1,17 @@
 import Tabs from './components/Tabs';
 import { SearchProvider } from './contexts/SearchContext';
 import { SavedDataProvider } from './contexts/SavedDataContext';
-import { AnimationProvider } from './contexts/AnimationContext';
+import { UIProvider } from './contexts/UIContext';
 
 const App = () => (
   <SavedDataProvider>
     <SearchProvider>
-      <AnimationProvider>
+      <UIProvider>
         <h1 className="text-3xl md:text-5xl font-bold mx-auto">
           Number <br className="lg:hidden" /> combinations
         </h1>
         <Tabs />
-      </AnimationProvider>
+      </UIProvider>
     </SearchProvider>
   </SavedDataProvider>
 );

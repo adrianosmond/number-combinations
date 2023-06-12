@@ -10,7 +10,7 @@ import {
 import { useSavedDataContext } from '../contexts/SavedDataContext';
 import { useSearchContext } from '../contexts/SearchContext';
 import { SELECT_TARGET_KEY } from './Tabs';
-import { useAnimationContext } from '../contexts/AnimationContext';
+import { useUIContext } from '../contexts/UIContext';
 import EditableName from './EditableName';
 
 type TabBarProps = {
@@ -30,8 +30,8 @@ const TabBar = ({ isSearching, selectedTab, setSelectedTab }: TabBarProps) => {
   } = useSavedDataContext();
   const { results } = useSearchContext();
   const tabBarRef = useRef<HTMLDivElement | null>(null);
-  const { setDestination, tabsRef, setIsTabBarScrollable } =
-    useAnimationContext();
+  const { setSaveSearchAnimationDestination, tabsRef, setIsTabBarScrollable } =
+    useUIContext();
   const transitioningTab = savedData.find((tab) => tab.isTransitioning);
 
   const checkIsTabBarScrollable = useCallback(() => {
@@ -42,11 +42,14 @@ const TabBar = ({ isSearching, selectedTab, setSelectedTab }: TabBarProps) => {
   }, [setIsTabBarScrollable]);
 
   useEffect(() => {
-    const resizeObserver = new ResizeObserver((entries) => {
+    const resizeObserver = new ResizeObserver(() => {
       checkIsTabBarScrollable();
     });
 
-    resizeObserver.observe(tabBarRef.current!);
+    if (tabBarRef.current) {
+      resizeObserver.observe(tabBarRef.current);
+    }
+
     return () => {
       resizeObserver.disconnect();
     };
@@ -122,7 +125,7 @@ const TabBar = ({ isSearching, selectedTab, setSelectedTab }: TabBarProps) => {
               onClick={() => {
                 addCombinationsToItem(tab.id, results);
                 requestAnimationFrame(() => {
-                  setDestination(tabsRef.current[tab.id]);
+                  setSaveSearchAnimationDestination(tabsRef.current[tab.id]);
                 });
               }}
               className="disabled:opacity-50"
