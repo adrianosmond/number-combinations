@@ -17,11 +17,15 @@ import Combination from '../components/Combination';
 const AnimationContext = createContext<{
   destination: HTMLElement | null;
   setDestination: Dispatch<SetStateAction<HTMLElement | null>>;
+  isTabBarScrollable: boolean;
+  setIsTabBarScrollable: Dispatch<SetStateAction<boolean>>;
   searchResultsRef: MutableRefObject<HTMLDivElement | null>;
   tabsRef: MutableRefObject<Record<string, HTMLButtonElement | null>>;
 }>({
   destination: null,
   setDestination: () => {},
+  isTabBarScrollable: false,
+  setIsTabBarScrollable: () => {},
   searchResultsRef: { current: null },
   tabsRef: { current: {} },
 });
@@ -34,6 +38,7 @@ const endScale = 0.1;
 
 export const AnimationProvider = ({ children }: AnimationProviderProps) => {
   const [destination, setDestination] = useState<HTMLElement | null>(null);
+  const [isTabBarScrollable, setIsTabBarScrollable] = useState(false);
   const { results } = useSearchContext();
 
   const [transform, setTransform] = useState<{ transform: string } | undefined>(
@@ -80,10 +85,12 @@ export const AnimationProvider = ({ children }: AnimationProviderProps) => {
     () => ({
       destination,
       setDestination,
+      isTabBarScrollable,
+      setIsTabBarScrollable,
       searchResultsRef,
       tabsRef,
     }),
-    [destination],
+    [destination, isTabBarScrollable],
   );
 
   return (

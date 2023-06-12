@@ -1,5 +1,12 @@
 import classNames from 'classnames';
-import { CSSProperties, Dispatch, SetStateAction } from 'react';
+import {
+  CSSProperties,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 import { useSavedDataContext } from '../contexts/SavedDataContext';
 import { useSearchContext } from '../contexts/SearchContext';
 import { SELECT_TARGET_KEY } from './Tabs';
@@ -22,13 +29,38 @@ const TabBar = ({ isSearching, selectedTab, setSelectedTab }: TabBarProps) => {
     transitionItem,
   } = useSavedDataContext();
   const { results } = useSearchContext();
-  const { setDestination, tabsRef } = useAnimationContext();
+  const tabBarRef = useRef<HTMLDivElement | null>(null);
+  const { setDestination, tabsRef, setIsTabBarScrollable } =
+    useAnimationContext();
   const transitioningTab = savedData.find((tab) => tab.isTransitioning);
+
+  const checkIsTabBarScrollable = useCallback(() => {
+    if (!tabBarRef.current) return;
+    setIsTabBarScrollable(
+      tabBarRef.current.scrollWidth > tabBarRef.current.offsetWidth,
+    );
+  }, [setIsTabBarScrollable]);
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      checkIsTabBarScrollable();
+    });
+
+    resizeObserver.observe(tabBarRef.current!);
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [checkIsTabBarScrollable]);
+
+  useEffect(() => {
+    checkIsTabBarScrollable();
+  }, [savedData, checkIsTabBarScrollable]);
 
   return (
     <div
+      ref={tabBarRef}
       className={classNames({
-        'fixed bottom-0 left-0 right-0 py-2 px-6 lg:px-12 flex gap-4 overflow-x-auto bg-slate-800 bg-opacity-90 text-xs font-semibold transition-transform':
+        'fixed bottom-0 left-0 right-0 py-2 pl-6 pr-10 lg:pl-12 lg:pr-12 flex gap-4 overflow-x-auto bg-slate-800 bg-opacity-90 text-xs font-semibold transition-transform':
           true,
         'translate-y-full': savedData.length === 0,
         'translate-y-0': savedData.length > 0,

@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
+import classNames from 'classnames';
 import { useAnimationContext } from '../contexts/AnimationContext';
 import { useSavedDataContext } from '../contexts/SavedDataContext';
 import { useSearchContext } from '../contexts/SearchContext';
@@ -12,12 +13,21 @@ type ActionButtonsProps = {
 const ActionButtons = ({ isSearching, setSelectedTab }: ActionButtonsProps) => {
   const { savedData, clearData, transitionItem } = useSavedDataContext();
   const { saveSearch, results } = useSearchContext();
-  const { setDestination, tabsRef } = useAnimationContext();
+  const { setDestination, tabsRef, isTabBarScrollable } = useAnimationContext();
 
   return (
-    <div className="fixed bottom-6 md:bottom-0 right-0 p-2 flex flex-col gap-2 bg-slate-800 bg-opacity-70">
+    <div
+      className={classNames({
+        'fixed bottom-0 right-0 p-2 flex flex-col gap-2 bg-slate-800 bg-opacity-70 duration-300':
+          true,
+        '-translate-y-8': isTabBarScrollable,
+      })}
+    >
       <button
-        className="disabled:opacity-50"
+        className={classNames({
+          'disabled:opacity-50 duration-300': true,
+          'translate-x-10 ': savedData.length === 0,
+        })}
         disabled={savedData.length === 0}
         onClick={() => {
           clearData();
